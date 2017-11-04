@@ -33,27 +33,51 @@ def load_user(eid):
 
 def get_from_database(metrics, dt_start='2010-01-01', dt_end='2099-01-01'):
     cxn = pg_connect()
-    output = dict(data={k: cxn.query(v.format(dt_start=dt_start,
-                                              dt_end=dt_end)) for k, v in metrics.items()})
+    output = dict(data={k: cxn.query_dict(v.format(dt_start=dt_start,
+                                                   dt_end=dt_end)) for k, v in metrics.items()})
     cxn.close()
     return output
 
-TRIAL = {"ttl_donation": "select sum(donation_amount) from donations where donation_date between '{dt_start}' and '{dt_end}'",
-         "donor_count": "select count(*) from members--{dt_start} {dt_end}",
-         "evts": "select count(*) from events where event_dt between '{dt_start}' and '{dt_end}'"}
+SUMMARY = {"ttl_donation": "SELECT sum(donation_amount) donation_amt FROM donations WHERE donor_type='Individual' and donation_date between '{dt_start}' and '{dt_end}'",
+           "ttl_funding": "SELECT sum(donation_amount) funding_amt FROM donations WHERE donor_type='Organization' and donation_date between '{dt_start}' and '{dt_end}'",
+           "evts": "select count(*) from events where event_dt between '{dt_start}' and '{dt_end}'"}
+
+PROGRAMS = {"attendance_by_program":
+            """SELECT event_name, COUNT(*) as attendee_count FROM events
+                WHERE program_ind = 1 and event_dt between '{dt_start}' and '{dt_end}'
+                GROUP BY 1 ORDER BY attendee_count desc
+                """,
+            "funding_by_program":
+                """
+                SELECT program_funded, SUM(donation_amount) as donations FROM 
+                donations WHERE program_ind=1 and event_dt between '{dt_start}' and '{dt_end}'
+                GROUP BY 1 ORDER BY donations desc
+                """,
+            "attendance_time_series":
+                """
+                SELECT event_name,SUBSTRING(event_dt::varchar,1,7) as month, COUNT(*) as attendance FROM events
+                WHERE program_ind=1-- and event_dt between '{dt_start}' and '{dt_end}'
+                GROUP BY 1,2 ORDER BY 1 asc,2 asc
+                """,
+            "funding_time_series":
+                """
+                SELECT program_funded,SUBSTRING(donation_date::varchar,1,7) as month, SUM(donation_amount) FROM donations
+                WHERE program_ind=1 and event_dt between '{dt_start}' and '{dt_end}'
+                GROUP BY 1,2 ORDER BY 1 asc,2 asc
+                """}
 
 
 @app.route("/")
 @app.route("/index", methods=["GET", "POST"])
 def index():
-    metrics = get_from_database(TRIAL)
+    metrics = get_from_database(SUMMARY)
     return render_template("index.html",
                            metrics=dumps(metrics))
 
 
 @app.route("/summary_api")
 def summary_api():
-    metrics = get_from_database(TRIAL)
+    metrics = get_from_database(PROGRAMS)
     return dumps(metrics)
 
 
