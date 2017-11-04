@@ -5,9 +5,20 @@ import datetime
 
 dir = '/Users/jft703/Documents/gift_the_code/'
 
+def random_date(n):
+    year = ['2017','2016','2015']
+    month = ['01','02','03','04','05','06','07','08','09','10','11','12']
+    day = ['01','02','03','04','05','06','07','08','09'] + [str(i) for i in range(10,29)]
+    random_dates = []
+    for i in range(n):
+        rand_dat = '' + random.choice(year) + '-' + random.choice(month) + '-' + random.choice(day)
+        random_dates.append(rand_dat)
+
+    return random_dates
+
 data = pd.read_excel(dir + 'member_data.xlsx')
+
 mock_companies = pd.read_excel(dir + 'mock_companies.xlsx')
-# data['country'] = data['country'].where(data['country'] == "United States", "Canada", None)
 
 donations_header = ['donor_type', 'company_name', 'email', 'address_line',
                     'city', 'postal_code', 'state', 'country', 'donation_amount', 'processing_fee_amount',
@@ -39,16 +50,7 @@ member_donations['program_funded'] = member_donations['program_ind'].apply(lambd
                                                                                                     else np.NaN)
 
 
-def random_date(n):
-    year = ['2017','2016','2015']
-    month = ['01','02','03','04','05','06','07','08','09','10','11','12']
-    day = ['01','02','03','04','05','06','07','08','09'] + [str(i) for i in range(10,29)]
-    random_dates = []
-    for i in range(n):
-        rand_dat = '' + random.choice(year) + '-' + random.choice(month) + '-' + random.choice(day)
-        random_dates.append(rand_dat)
 
-    return random_dates
 member_donations['donation_date'] = random_date(500)
 
 # Random
