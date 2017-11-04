@@ -48,5 +48,12 @@ td {
           </tr>
       </table>
     </center>
+
+    <div>
+      <form enctype="multipart/form-data" method="POST" action="/upload">
+        <input type="file" name="file"/>
+        <input type="submit" value="Upload"/>
+      </form>
+    </div>
 </div>
 {% endblock %}

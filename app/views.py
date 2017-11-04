@@ -11,6 +11,8 @@ from flask_login import (LoginManager, UserMixin, current_user,
 
 from app import app
 
+import flask_excel as excel
+
 from .forms import QueryForm
 # from .models import Account
 # from .utils import *
@@ -33,6 +35,12 @@ def load_user(eid):
 def index():
     return render_template('index.html')
 
+@app.route('/upload', methods=['GET', 'POST'])
+def upload():
+  if request.method == 'POST':
+    sheet = request.get_sheet(field_name='file')
+    print(sheet)
+    return render_template('index.html')
 
 # @app.route('/login', methods=['GET', 'POST'])
 # def login():
