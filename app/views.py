@@ -80,6 +80,32 @@ PROGRAMS = {"attendance_by_program":
                 GROUP BY 1,2 ORDER BY 1 asc,2 asc
                 """}
 
+EVENTS = {"top_five_evts":
+          """
+            SELECT event_name,event_dt::varchar, attendee_count FROM (
+            SELECT event_id, event_name,event_dt, COUNT(*) as attendee_count FROM events
+            WHERE program_ind = 0 and event_dt between '{dt_start}' and '{dt_end}' GROUP BY 1,2,3
+            ) a ORDER BY attendee_count DESC LIMIT 5
+            """}
+
+DONATIONS = {"donations_over_time":
+             """
+                SELECT SUBSTRING(donation_date::varchar,1,7) as month, SUM(donation_amount) FROM donations
+                WHERE program_ind=1 and donation_date between '{dt_start}' and '{dt_end}'
+                GROUP BY 1 ORDER BY 1 asc
+                """}
+
+MEMBERS = {"membership_over_time":
+           """
+                SELECT SUBSTRING(join_date,1,7) as month, COUNT(*) FROM members
+                GROUP BY 1 ORDER BY 1--{dt_start} {dt_end}
+                """,
+           "age_of_members":
+           """
+                SELECT (CURRENT_DATE - birth_date)/365::int as age, COUNT(*) FROM members
+                GROUP BY 1 ORDER BY 1 ASC--{dt_start} {dt_end}
+                """}
+
 
 @app.route("/")
 @app.route("/index", methods=["GET", "POST"])
@@ -124,26 +150,21 @@ def program_api():
 
 @app.route("/event_api")
 def event_api():
-    dt_start = request.get("dt_start")
-    dt_end = request.get("dt_end")
-
-    return
+    metrics = get_from_database(EVENTS)
+    return dumps(metrics)
 
 
 @app.route("/member_api")
 def member_api():
-    dt_start = request.get("dt_start")
-    dt_end = request.get("dt_end")
+    metrics = get_from_database(MEMBERS)
 
-    return
+    return dumps(metrics)
 
 
 @app.route("/donation_api")
 def donation_api():
-    dt_start = request.get("dt_start")
-    dt_end = request.get("dt_end")
-
-    return
+    metrics = get_from_database(DONATIONS)
+    return dumps(metrics)
 
 
 @app.route("/upload", methods=["GET", "POST"])
