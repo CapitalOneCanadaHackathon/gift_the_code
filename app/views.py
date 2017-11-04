@@ -44,13 +44,13 @@ SUMMARY = {"ttl_donation": "SELECT sum(donation_amount) donation_amt FROM donati
 
 PROGRAMS = {"attendance_by_program":
             """SELECT event_name, COUNT(*) as attendee_count FROM events
-                WHERE program_ind = 1 and event_dt between '{dt_start}' and '{dt_end}'
+                WHERE program_ind=1 and event_dt between '{dt_start}' and '{dt_end}'
                 GROUP BY 1 ORDER BY attendee_count desc
                 """,
             "funding_by_program":
                 """
                 SELECT program_funded, SUM(donation_amount) as donations FROM 
-                donations WHERE program_ind=1 and event_dt between '{dt_start}' and '{dt_end}'
+                donations WHERE program_ind=1 and donation_date between '{dt_start}' and '{dt_end}'
                 GROUP BY 1 ORDER BY donations desc
                 """,
             "attendance_time_series":
@@ -62,7 +62,7 @@ PROGRAMS = {"attendance_by_program":
             "funding_time_series":
                 """
                 SELECT program_funded,SUBSTRING(donation_date::varchar,1,7) as month, SUM(donation_amount) FROM donations
-                WHERE program_ind=1 and event_dt between '{dt_start}' and '{dt_end}'
+                WHERE program_ind=1 and donation_date between '{dt_start}' and '{dt_end}'
                 GROUP BY 1,2 ORDER BY 1 asc,2 asc
                 """}
 
