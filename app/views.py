@@ -21,9 +21,9 @@ from .database_operations import pg_connect
 # begin user access management
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'login'
-# login_manager.login_message = 'Please log in to access this page.'
-login_manager.login_message_category = 'warning'
+login_manager.login_view = "login"
+# login_manager.login_message = "Please log in to access this page."
+login_manager.login_message_category = "warning"
 
 
 @login_manager.user_loader
@@ -31,151 +31,144 @@ def load_user(eid):
     return Account.get(eid)
 
 
-@app.route('/')
-@app.route('/index', methods=['GET', 'POST'])
+def get_from_database(metrics, dt_start='2010-01-01', dt_end='2099-01-01'):
+    cxn = pg_connect()
+    output = dict(data={k: cxn.query(v.format(dt_start=dt_start,
+                                              dt_end=dt_end)) for k, v in metrics.items()})
+    cxn.close()
+    return output
+
+TRIAL = {"ttl_donation": "select sum(donation_amount) from donations where donation_date between '{dt_start}' and '{dt_end}'",
+         "donor_count": "select count(*) from members--{dt_start} {dt_end}",
+         "evts": "select count(*) from events where event_dt between '{dt_start}' and '{dt_end}'"}
+
+
+@app.route("/")
+@app.route("/index", methods=["GET", "POST"])
 def index():
-    # cxn = pg_connect()
-    # ttl_donation = cxn.query("select sum(donation_amount) from donations")
-    # donor_count = cxn.query("select count(*) from members")
-    # evts = cxn.query("select count(*) from events")
-    # metrics = dict(data=dict(ttl_donation=ttl_donation,
-    #                          donor_count=donor_count,
-    #                          evts=evts))
-    # cxn.close()
-    return render_template('index.html',
+    metrics = get_from_database(TRIAL)
+    return render_template("index.html",
                            metrics=dumps(metrics))
 
 
-@app.route('/summary_api')
+@app.route("/summary_api")
 def summary_api():
-    dt_start = request.get('dt_start')
-    dt_end = request.get('dt_end')
-
-    cxn = pg_connect()
-
-    ttl_donation = cxn.query("select sum(donation_amount) from donations")
-    donor_count = cxn.query("select count(*) from members")
-    evts = cxn.query("select count(*) from events")
-    metrics = dict(data=dict(ttl_donation=ttl_donation,
-                             donor_count=donor_count,
-                             evts=evts))
-
-    cxn.close()
+    metrics = get_from_database(TRIAL)
     return dumps(metrics)
 
 
-@app.route('/programs')
+@app.route("/programs")
 def programs():
     return
 
 
-@app.route('/events')
+@app.route("/events")
 def events():
     return
 
 
-@app.route('/members')
+@app.route("/members")
 def members():
     return
 
 
-@app.route('/donations')
+@app.route("/donations")
 def donations():
     return
 
 
-@app.route('/program_api')
+@app.route("/program_api")
 def program_api():
-    dt_start = request.get('dt_start')
-    dt_end = request.get('dt_end')
+    dt_start = request.get("dt_start")
+    dt_end = request.get("dt_end")
 
     return
 
 
-@app.route('/event_api')
+@app.route("/event_api")
 def event_api():
-    dt_start = request.get('dt_start')
-    dt_end = request.get('dt_end')
+    dt_start = request.get("dt_start")
+    dt_end = request.get("dt_end")
 
     return
 
 
-@app.route('/member_api')
+@app.route("/member_api")
 def member_api():
-    dt_start = request.get('dt_start')
-    dt_end = request.get('dt_end')
+    dt_start = request.get("dt_start")
+    dt_end = request.get("dt_end")
 
     return
 
 
-@app.route('/donation_api')
+@app.route("/donation_api")
 def donation_api():
-    dt_start = request.get('dt_start')
-    dt_end = request.get('dt_end')
+    dt_start = request.get("dt_start")
+    dt_end = request.get("dt_end")
 
     return
 
 
-@app.route('/upload', methods=['GET', 'POST'])
+@app.route("/upload", methods=["GET", "POST"])
 def upload():
-    if request.method == 'POST':
-        sheet = request.get_sheet(field_name='file')
+    if request.method == "POST":
+        sheet = request.get_sheet(field_name="file")
         print(sheet)
-        return render_template('index.html')
+        return render_template("index.html")
 
 
-# @app.route('/login', methods=['GET', 'POST'])
+# @app.route("/login", methods=["GET", "POST"])
 # def login():
-#     next = request.args.get('next')
+#     next = request.args.get("next")
 
-#     # app.logger.debug('Arrived at login page... Next: %s' %(next))
+#     # app.logger.debug("Arrived at login page... Next: %s" %(next))
 #     if current_user is not None and current_user.is_authenticated:
-#         app.logger.info('Already logged in, redirecting to home page')
-#         return redirect(url_for('index'))
+#         app.logger.info("Already logged in, redirecting to home page")
+#         return redirect(url_for("index"))
 
-#     elif request.method == 'POST':
+#     elif request.method == "POST":
 #         # validate username and password
-#         eid = request.form['eid'].lower()
-#         app.logger.info('Attempting to log in %s... Next: %s' % (eid, next))
+#         eid = request.form["eid"].lower()
+#         app.logger.info("Attempting to log in %s... Next: %s" % (eid, next))
 
 #         # create the user via ldap
-#         account = Account.get_via_ldap(eid, request.form['pwd'])
+#         account = Account.get_via_ldap(eid, request.form["pwd"])
 #         if(account):
 #             groups = "|".join(account.groups(eid))
-#             if 'IRIS' in groups or 'PHDP' in groups:
-#                 app.logger.info('Logging in %s...' % (eid))
+#             if "IRIS" in groups or "PHDP" in groups:
+#                 app.logger.info("Logging in %s..." % (eid))
 #                 login_user(account)
 #                 # Tell Flask-Principal the identity changed
 #                 identity_changed.send(app, identity=Identity(account.id))
 
-#                 app.logger.debug('Is %s authenticated? %s' %
+#                 app.logger.debug("Is %s authenticated? %s" %
 #                                  (eid, account.is_authenticated()))
-#                 app.logger.info('Logged in successfully')
+#                 app.logger.info("Logged in successfully")
 
 #                 # next_is_valid should check if the user has valid
 #                 # permission to access the `next` url
 #                 if not next_is_valid(next):
 #                     return abort(400)
 
-#                 return redirect(next or url_for('index'))
+#                 return redirect(next or url_for("index"))
 #             else:
 #                 app.logger.warning(
-#                     'Could not log in %s. Invalid AD groups!' % (eid)
+#                     "Could not log in %s. Invalid AD groups!" % (eid)
 #                 )
-#                 flash('Invalid credentials, please apply for IRIS access', 'danger')
+#                 flash("Invalid credentials, please apply for IRIS access", "danger")
 #         else:
 #             app.logger.warning(
-#                 'Could not log in %s. Invalid credentials!' % (eid))
-#             flash('Invalid username or password.', 'danger')
+#                 "Could not log in %s. Invalid credentials!" % (eid))
+#             flash("Invalid username or password.", "danger")
 
-#     return render_template('login.html')
+#     return render_template("login.html")
 
 
-# @app.route('/logout')
+# @app.route("/logout")
 # def logout():
-#     app.logger.info('Attempting to log out...')
+#     app.logger.info("Attempting to log out...")
 #     eid = current_user.id
 #     logout_user()
-#     app.logger.info('Logged out %s successfully' % (eid))
-#     flash('Logged out successfully.', 'success')
-#     return redirect(url_for('login'))
+#     app.logger.info("Logged out %s successfully" % (eid))
+#     flash("Logged out successfully.", "success")
+#     return redirect(url_for("login"))
