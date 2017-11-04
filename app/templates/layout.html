@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>MRA4</title>
+  <script src="static/jquery-1.12.4.min.js"></script>
+  <script src="{{ url_for('static', filename='jquery-ui.js') }}"></script>
+  <script src="static/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css">
+  <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.jpg') }}">
+
+
+  <style>
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background: rgba( 255, 255, 255, .8) url('static/loadingimage.gif') 50% 50% no-repeat;
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      /* 15% from the top and centered */
+      padding: 20px;
+      border: 1px solid #888;
+      width: 30%;
+      /* Could be more or less, depending on screen size */
+    }
+    /* When the body has the loading class, we turn
+      the scrollbar off with overflow:hidden */
+
+    body.loading {
+      overflow: hidden;
+    }
+    /* Anytime the body has the loading class, our
+      modal element will be visible */
+
+    body.loading .modal {
+      display: block;
+    }
+  </style>
+</head>
+
+<body bgcolor="FCFCFE">
+  <nav class="navbar navbar-default navbar-static-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+        <a href="index" class='navbar-brand'>Home</a>
+      </div>
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+            <li><a href="/mra4_reporting">Reporting</a></li>
+
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="/logout">Logout</a></li>
+        </ul>
+      </div>
+  </nav>
+  <div style="padding-left:25px">
+
+    {% block content %}{% endblock %}
+
+  </div>
+
+
+</body>
+<script type="text/javascript">// <![CDATA[
+        function loading(){
+            $("#loading").show();
+            $("#content").hide();
+        }
+// ]]></script>
+
+
+</html>

@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+{% from "_formhelpers.html" import render_field %}
+
+{% block content %}
+
+<!-- Display flashed messages -->
+  <br>
+  {% with msgs = get_flashed_messages(with_categories=true) %}
+    {% if msgs %}
+      {%- for category, msg in msgs %}
+        <div class="alert alert-{{category}} fade in" role="alert">
+          <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+          {{ msg }}
+        </div>
+      {% endfor -%}
+    {% endif %}
+  {% endwith %}
+
+<style>
+.btn {
+    height: 65px;
+    width: 100%;
+}
+
+td {
+    border: 0px;
+    width: 30%;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+</style>
+
+<div class='fluid-container'>
+    <center style="margin-top:5%; margin-bottom:5%">
+        <img src={{ url_for('static', filename='images/logo.png') }} style='height:150px'>
+    </center>
+    <center>
+      <table>
+          <tr>
+              <td><a href='mra4_case_worker' class="btn btn-primary btn-lg">Call Listening QA Portal</a></td>
+              <td><a href='mra4_case_manager' class="btn btn-primary btn-lg">Call Listening Case Manager</a></td>
+          </tr>
+          <tr>
+              <td><a href='mra4_vtt_case_worker' class="btn btn-primary btn-lg">Voice To Text QA Portal</a></td>
+              <td><a href='mra4_vtt_case_manager' class="btn btn-primary btn-lg">Voice To Text Case Manager</a></td>
+          </tr>
+      </table>
+    </center>
+</div>
+{% endblock %}
