@@ -40,7 +40,21 @@ def get_from_database(metrics, dt_start='2010-01-01', dt_end='2099-01-01'):
 
 SUMMARY = {"ttl_donation": "SELECT sum(donation_amount) donation_amt FROM donations WHERE donor_type='Individual' and donation_date between '{dt_start}' and '{dt_end}'",
            "ttl_funding": "SELECT sum(donation_amount) funding_amt FROM donations WHERE donor_type='Organization' and donation_date between '{dt_start}' and '{dt_end}'",
-           "evts": "select count(*) from events where event_dt between '{dt_start}' and '{dt_end}'"}
+           "programs": "SELECT count(*) FROM events WHERE program_ind = 1 and event_dt between '{dt_start}' and '{dt_end}'",
+           "evts": "SELECT count(*) from events where program_ind = 0 and event_dt between '{dt_start}' and '{dt_end}'",
+           "donors":
+           """
+                SELECT member_count + non_member_count as donors from
+                (SELECT count(distinct member_id) - 1 as member_count
+                , sum(case when member_id = 999999999 then 1 else 0 end) as non_member_count
+                from donations where donor_type = 'Individual' and donation_date between '{dt_start}' and '{dt_end}') a
+                """,
+           "funders":
+           """
+                SELECT sum(case when member_id = 999999999 and donor_type = 'Organization' then 1 else 0 end) as funder_count
+                from donations where donation_date  between '{dt_start}' and '{dt_end}'
+                """}
+
 
 PROGRAMS = {"attendance_by_program":
             """SELECT event_name, COUNT(*) as attendee_count FROM events
@@ -77,7 +91,7 @@ def index():
 
 @app.route("/summary_api")
 def summary_api():
-    metrics = get_from_database(PROGRAMS)
+    metrics = get_from_database(SUMMARY)
     return dumps(metrics)
 
 
@@ -103,10 +117,9 @@ def donations():
 
 @app.route("/program_api")
 def program_api():
-    dt_start = request.get("dt_start")
-    dt_end = request.get("dt_end")
+    metrics = get_from_database(PROGRAMS)
 
-    return
+    return dumps(metrics)
 
 
 @app.route("/event_api")
