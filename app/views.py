@@ -97,7 +97,7 @@ DONATIONS = {"donations_over_time":
 
 MEMBERS = {"membership_over_time":
            """
-                SELECT SUBSTRING(join_date,1,7) as month, COUNT(*) FROM members
+                SELECT SUBSTRING(join_date::varchar,1,7) as month, COUNT(*) FROM members
                 GROUP BY 1 ORDER BY 1--{dt_start} {dt_end}
                 """,
            "age_of_members":
@@ -123,7 +123,7 @@ def summary_api():
 
 @app.route("/programs")
 def programs():
-    return
+    return render_template("programs.html")
 
 
 @app.route("/events")
