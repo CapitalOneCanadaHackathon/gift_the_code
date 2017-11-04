@@ -4,6 +4,23 @@ SELECT sum(donation_amount) FROM donations WHERE donor_type='Individual'
 -- funding
 SELECT sum(donation_amount) FROM donations WHERE donor_type='Organization'
 
+--program attendance
+SELECT count(*) FROM events WHERE program_ind = 1
+
+--donor count
+SELECT member_count + non_member_count
+from
+(SELECT count(distinct member_id) - 1 as member_count
+, sum(case when member_id = 999999999 then 1 else 0 end) as non_member_count
+from donations where donor_type = 'Individual') a
+
+--funder count
+SELECT sum(case when member_id = 999999999 and donor_type = 'Organization' then 1 else 0 end) as funder_count
+from donations
+
+--event attendance
+SELECT count(*) from events where program_ind = 0
+
 --top 5 visited events
 SELECT event_name,event_dt, attendee_count FROM (
 SELECT event_id, event_name,event_dt, COUNT(*) as attendee_count FROM events
