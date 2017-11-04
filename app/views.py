@@ -55,13 +55,13 @@ PROGRAMS = {"attendance_by_program":
                 """,
             "attendance_time_series":
                 """
-                SELECT event_name,SUBSTRING(event_dt,1,7) as month, COUNT(*) as attendance FROM events
+                SELECT event_name,SUBSTRING(event_dt::varchar,1,7) as month, COUNT(*) as attendance FROM events
                 WHERE program_ind=1-- and event_dt between '{dt_start}' and '{dt_end}'
                 GROUP BY 1,2 ORDER BY 1 asc,2 asc
                 """,
             "funding_time_series":
                 """
-                SELECT program_funded,SUBSTRING(donation_date,1,7) as month, SUM(donation_amount) FROM donations
+                SELECT program_funded,SUBSTRING(donation_date::varchar,1,7) as month, SUM(donation_amount) FROM donations
                 WHERE program_ind=1 and event_dt between '{dt_start}' and '{dt_end}'
                 GROUP BY 1,2 ORDER BY 1 asc,2 asc
                 """}
