@@ -50,9 +50,11 @@ class pg_connect():
     Object for executing postgres queries
     """
 
-    def __init__(self, host, uid, pwd, port=5432, database='postgres'):
-        self.conn = psycopg2.connect(
-            host=host, user=uid, password=pwd, port=port, database=database)
+    def __init__(self, database='gtc', user='ubuntu'):
+        self.conn = psycopg2.connect(database=database, user='ubuntu')
+
+    def close(self):
+        self.conn.close()
 
     def query(self, sql):
         curs = self.conn.cursor()

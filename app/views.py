@@ -14,6 +14,7 @@ from app import app
 import flask_excel as excel
 
 from .forms import QueryForm
+from .database_operations import pg_connect
 # from .models import Account
 # from .utils import *
 
@@ -33,14 +34,95 @@ def load_user(eid):
 @app.route('/')
 @app.route('/index', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html')
+    # cxn = pg_connect()
+    # ttl_donation = cxn.query("select sum(donation_amount) from donations")
+    # donor_count = cxn.query("select count(*) from members")
+    # evts = cxn.query("select count(*) from events")
+    # metrics = dict(data=dict(ttl_donation=ttl_donation,
+    #                          donor_count=donor_count,
+    #                          evts=evts))
+    # cxn.close()
+    return render_template('index.html',
+                           metrics=dumps(metrics))
+
+
+@app.route('/summary_api')
+def summary_api():
+    dt_start = request.get('dt_start')
+    dt_end = request.get('dt_end')
+
+    cxn = pg_connect()
+
+    ttl_donation = cxn.query("select sum(donation_amount) from donations")
+    donor_count = cxn.query("select count(*) from members")
+    evts = cxn.query("select count(*) from events")
+    metrics = dict(data=dict(ttl_donation=ttl_donation,
+                             donor_count=donor_count,
+                             evts=evts))
+
+    cxn.close()
+    return dumps(metrics)
+
+
+@app.route('/programs')
+def programs():
+    return
+
+
+@app.route('/events')
+def events():
+    return
+
+
+@app.route('/members')
+def members():
+    return
+
+
+@app.route('/donations')
+def donations():
+    return
+
+
+@app.route('/program_api')
+def program_api():
+    dt_start = request.get('dt_start')
+    dt_end = request.get('dt_end')
+
+    return
+
+
+@app.route('/event_api')
+def event_api():
+    dt_start = request.get('dt_start')
+    dt_end = request.get('dt_end')
+
+    return
+
+
+@app.route('/member_api')
+def member_api():
+    dt_start = request.get('dt_start')
+    dt_end = request.get('dt_end')
+
+    return
+
+
+@app.route('/donation_api')
+def donation_api():
+    dt_start = request.get('dt_start')
+    dt_end = request.get('dt_end')
+
+    return
+
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
-  if request.method == 'POST':
-    sheet = request.get_sheet(field_name='file')
-    print(sheet)
-    return render_template('index.html')
+    if request.method == 'POST':
+        sheet = request.get_sheet(field_name='file')
+        print(sheet)
+        return render_template('index.html')
+
 
 # @app.route('/login', methods=['GET', 'POST'])
 # def login():
