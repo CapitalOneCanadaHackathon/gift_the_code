@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="data-vis">
+ 
+</div>
+<script>
+  $.getJSON("/donation_api", function(data) {
+    console.log(data);
+    var items = [];
+    $.each( data.data, function( key, value) {
+      console.log(key);
+      console.log(value);
+      items.push("<div class='column-header'>" + key + "</div>");
+    });
+    $(".data-vis").append(items);
+  });
+</script>
+
+
+{% endblock content %}

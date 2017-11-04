@@ -128,17 +128,17 @@ def programs():
 
 @app.route("/events")
 def events():
-    return
+    return render_template("events.html")
 
 
 @app.route("/members")
 def members():
-    return
+    return render_template("members.html")
 
 
 @app.route("/donations")
 def donations():
-    return
+    return render_template("donations.html")
 
 
 @app.route("/program_api")
