@@ -228,11 +228,11 @@ def donation_api():
 
 @app.route("/upload", methods=["GET", "POST"])
 def upload():
-    if request.method == "POST":
-        sheet = request.get_sheet(field_name="file")
-        print(sheet)
-        return render_template("index.html")
-
+    # if request.method == "POST":
+    #     sheet = request.get_sheet(field_name="file")
+    #     print(sheet)
+    #     return render_template("index.html")
+    return render_template("index.html")
 
 # @app.route("/login", methods=["GET", "POST"])
 # def login():

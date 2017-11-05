@@ -5,7 +5,7 @@
   <title>MRA4</title>
   <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  <!-- <link rel="stylesheet" href="static/css/bootstrap.min.css"> -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
   <link href=“https://fonts.googleapis.com/css?family=Roboto” rel=“stylesheet”>
   <link rel="stylesheet" type="text/css" href="static/css/normalize.css">
@@ -21,7 +21,7 @@
       <li><a href="/events">EVENTS</a></li>
       <li><a href="/members">MEMBERS</a></li>
       <li><a href="/donations">DONATIONS</a></li>
-      <li><a href="/logout">LOGOUT</a></li>
+      <li><a id="upload">UPLOAD</a><input type="file" id="uploadAction"/></li>
     </ul>
     </div>
   </nav>
@@ -34,5 +34,11 @@
 
 </body>
 
+<script>
+  $("#upload").on("click", function() {
+    var action = $("#uploadAction").trigger('click');
+    location.reload();
+  });
+</script>
 
 </html>
