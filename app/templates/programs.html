@@ -9,9 +9,20 @@
 <!-- <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}"> -->
 <link rel="stylesheet" href="{{ url_for('static', filename='dc.css') }}">
 
-<div class="data-vis" id="program_ts">
- 
+<div class="data-vis col-xs-5 col-md-8" id="program_ts">
+        <h2>Program Funding and Attendance</h2> 
 </div>
+<div class="data-vis col-xs-5 col-md-4" id="program_ts">
+        <h2>Year to Date</h2> 
+        <div class='summary-small'>
+            <span class='value-small' id='attendance'>2,365</span> <br>
+            <span class='key-small'>Attendance</span><br>
+            <br><br>
+            <span class='value-small' id='funding'>$32,917.12</span> <br>
+            <span class='key-small'>Funding</span><br>
+        </div>
+</div>
+
 <script src="{{ url_for('static', filename='js/program.js') }}"></script>
 
 {% endblock content %}

@@ -109,7 +109,7 @@ input[type=file] {
 }
 
 .summary {
-  margin: 50px 0;
+  margin: 115px 0;
 }
 
 .summary .key, .summary .value {
@@ -117,11 +117,27 @@ input[type=file] {
 }
 
 .summary .value {
-  font-size: 55px;
+  font-size: 72px;
   font-weight: 700;
 }
 
 .summary .key {
+  font-size: 25px;
+  font-weight: 700;
+  color: #61BCB2;
+}
+
+.summary-small {
+  margin: 50px 0;
+}
+
+
+.summary-small .value-small {
+  font-size: 42px;
+  font-weight: 700;
+}
+
+.summary-small .key-small {
   font-size: 25px;
   font-weight: 700;
   color: #61BCB2;

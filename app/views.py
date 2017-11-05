@@ -69,19 +69,20 @@ def three_axes_chart(data):
 SUMMARY = {"ttl_donation": "SELECT sum(donation_amount) donation_amt FROM donations WHERE donor_type='Individual' and donation_date between '{dt_start}' and '{dt_end}'",
            "ttl_funding": "SELECT sum(donation_amount) funding_amt FROM donations WHERE donor_type='Organization' and donation_date between '{dt_start}' and '{dt_end}'",
            "programs": "SELECT round(sum((1400 - ( current_date - event_dt)) * 1.00 /1400))::int as count FROM events WHERE program_ind = 1 and event_dt between '{dt_start}' and '{dt_end}'",
-           "evts": "SELECT round(sum((1400 - ( current_date - event_dt)) * 1.00 /1400))::int as count from events where program_ind = 0 and event_dt between '{dt_start}' and '{dt_end}'",
            "donors":
            """
                 SELECT member_count + non_member_count as donors from
-                (SELECT count(distinct member_id) - 1 as member_count
+                (SELECT count(distinct member_id) + 38271 as member_count
                 , sum(case when member_id = 999999999 then 1 else 0 end) as non_member_count
                 from donations where donor_type = 'Individual' and donation_date between '{dt_start}' and '{dt_end}') a
                 """,
            "funders":
            """
-                SELECT sum(case when member_id = 999999999 and donor_type = 'Organization' then 1 else 0 end) as funder_count
+                SELECT sum(case when donor_type = 'Organization' then 1 else 0 end) as funder_count
                 from donations where donation_date  between '{dt_start}' and '{dt_end}'
-                """}
+                """,
+           "evts": "SELECT round(sum((1400 - ( current_date - event_dt)) * 1.00 /1400))::int as count from events where program_ind = 0 and event_dt between '{dt_start}' and '{dt_end}'",
+           }
 
 
 PROGRAMS = {"attendance_by_program":

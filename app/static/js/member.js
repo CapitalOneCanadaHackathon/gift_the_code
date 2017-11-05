@@ -21,7 +21,7 @@ function refresh_charts() {
 
         chart
           .width(1200)
-          .height(480)
+          .height(350)
           .dimension(dateDim)
           .x(d3.time.scale().domain([minDate,maxDate]))
           .brushOn(false)
@@ -34,6 +34,41 @@ function refresh_charts() {
           .ordinalColors(['#595097'])
           .yAxisLabel("Total number of registered members")
           .xAxisLabel("Date")
+        
+          // Member Age Chart
+        var chart2 = dc.rowChart("#member_age");
+
+        var ct_data = data.data.age_of_members
+        var ndx2 = crossfilter(ct_data);
+      
+        var ageDim = ndx2.dimension(function (d) {return d.age_range;});
+        var member_sum_age = ageDim.group().reduceSum(function(d) {return d.count;});
+      
+        chart2
+          .width(500)
+          .height(338)
+          .dimension(ageDim)
+          .margins({top: 30, right: 50, bottom: 40, left: 10})
+          .group(member_sum_age, "Number of members")
+          .valueAccessor(function (d) {return d.value;})
+
+          // Member Length Chart
+        var chart3 = dc.rowChart("#member_length");
+
+        var ct_data2 = data.data.membership_length
+        console.log(ct_data2)
+        var ndx3 = crossfilter(ct_data2);
+      
+        var lenDim = ndx3.dimension(function (d) {return d.membership_age_range;});
+        var member_sum_len = lenDim.group().reduceSum(function(d) {return d.count;});
+      
+        chart3
+          .width(500)
+          .height(350)
+          .dimension(lenDim)
+          .margins({top: 30, right: 50, bottom: 40, left: 10})
+          .group(member_sum_len, "Number of members")
+          .valueAccessor(function (d) {return d.value;})
 
         dc.renderAll();
 

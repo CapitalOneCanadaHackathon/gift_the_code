@@ -21,7 +21,7 @@ function refresh_charts() {
         var maxDate = dateDim.top(1)[0].dd;
     
         chart
-        .width(615)
+        .width(1100)
         .height(384)
         .dimension(dateDim)
         .x(d3.time.scale().domain([minDate,maxDate]))
