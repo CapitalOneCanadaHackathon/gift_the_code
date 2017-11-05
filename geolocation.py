@@ -1,8 +1,10 @@
 import pandas as pd
 from geopy.geocoders import Nominatim
+import googlemaps
 import re
 
 geolocator = Nominatim()
+gmaps = googlemaps.Client(key='api-key')
 
 members = pd.read_csv('members_new.csv')
 
@@ -17,15 +19,29 @@ def gps_coordinates(data):
 
     return data
 
+def gps_coordinates_google(data):
+    try:
+        geocode_result = gmaps.geocode(data['full_address'])
+        #location = geolocator.geocode(data['full_address'])
+
+        if geocode_result != None:
+            data['latitude'] = geocode_result[0]['geometry']['location']['lat']
+            data['longitude'] = geocode_result[0]['geometry']['location']['lng']
+            print(data['latitude'])
+    except Exception:
+        pass
+
+    return data
+
 #members['full_address'] = members['address_line'] + ' , ' + members['city'] + ' , ' + members['state']
-for index, row in members.iterrows():
-    if re.search(r'\d+\s*\-\s*\d+', row['full_address']):
-        row['full_address'] = re.split(r'\d+\s*\-',row['full_address'])[-1]
+def split_function(data):
+    if re.search(r'\d+\s*\-\s*\d+', data['full_address']):
+        return re.split(r'\d+\s*\-',data['full_address'])[-1]
 
-    # print(index)
-    # location = geolocator.geocode(row['full_address'])
-    # print(location.address)
+    else:
+        return data['full_address']
 
+members['full_address'] = members.apply(split_function,axis=1)
 
 
 members.loc[members['latitude'].isnull()] = members.loc[members['latitude'].isnull()].apply(gps_coordinates, axis=1)
