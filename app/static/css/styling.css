@@ -1,0 +1,95 @@
+
+.container {
+  /*font-family: 'Roboto', sans-serif;*/
+  /*color: #595959;*/
+  /*display: block;*/
+}
+
+a {
+  text-decoration: none;
+}
+
+.navbar {
+  display: block;
+  width: 100%;
+  height:50px;
+  margin-top: 10px;
+  background-color: white;
+  /*position: fixed;*/
+}
+
+.navbar img {
+  display: inline-block;
+  float: left;
+  border: 0;
+  vertical-align: middle;
+}
+
+.navbar .pun {
+  vertical-align: middle;
+  margin-left: 10px;
+  padding-top: 10px;
+  display: inline-block;
+  font-size: 25px;
+}
+
+#logo {
+  background-image: url(../img/logo.svg);
+  background-repeat:no-repeat;
+  background-size: 100% 100%;
+  border: none;
+  height: 50px;
+  width: 100px;
+  margin-left: 20px;
+}
+
+.navbar .menu {
+  display: inline-block;
+  float: right;
+  margin-right: 20px;
+}
+
+.navbar .menu > li {
+  display: inline;
+}
+
+.navbar .menu > li > a {
+  text-decoration: none;
+  color: black;
+  margin: 0 15px;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.index {
+  background-color: #505997;
+  width: 100%;
+  color: white;
+  height: 500px;
+}
+
+.navbar.subnav {
+  background-color: #3C3565;
+  display: block;
+  color: white;
+  /*padding-top: 30px;*/
+  height: 100px;
+}
+
+.navbar.subnav .title {
+  margin-left: 20px;
+  display: inline-block;
+  float: left;
+  font-size: 36px;
+  padding-top: 22px;
+}
+
+.navbar.subnav .timeline {
+  margin-right: 20px;
+  display: inline-block;
+  float: right;
+  font-size: 18px;
+  padding-top: 35px;
+}
+
+
