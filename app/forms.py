@@ -12,4 +12,4 @@ class QueryForm(Form):
                                                'Trans Youth Mentorship'),
                                               ('Sunday Drop In', 'Sunday Drop In'),
                                               ('Legal Clinic', 'Legal Clinic'),
-                                              ('New Comer Settlement Services', 'New Comer Settlement Services')])
+                                              ('Settlement Services', 'Settlement Services')])

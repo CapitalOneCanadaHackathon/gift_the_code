@@ -17,7 +17,7 @@
   function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
-
+  var numbers = {};
   $.getJSON("/summary_api", function(data) {
     var items = [];
     items.push("<div class='row'>");
@@ -26,6 +26,7 @@
       if (dict[key]["currency"]) {
         num = "$" + num;
       }
+      numbers[key] = num;
       var item = "<div class='summary col-sm-4'><div class='value'>";
       if (dict[key]["icon"]) {
         item = item + "<i class='fa " + dict[key]["icon"] + "'></i>  ";
@@ -35,8 +36,9 @@
     });
     items.push("</div>");
     $(".index").append(items);
-  });
 
+  });
+  
   $($(".menu li a")[0]).css("color", "#61BCB2");
 </script>
 {% endblock content %}

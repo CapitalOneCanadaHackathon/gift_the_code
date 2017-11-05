@@ -1,4 +1,4 @@
-var chart = dc.barChart('#program_attendance');
+var attendance_chart = dc.barChart('#program_attendance');
 
 d3.json('program_data.json', function(error, data) {
     if(error)
@@ -8,7 +8,7 @@ d3.json('program_data.json', function(error, data) {
         programDimension = ndx.dimension(function(d) {return d.event_name;}),
         sumGroup       = programDimension.group().reduceSum(function(d) {return d.attendee_count;});
 
-    chart
+    attendance_chart
         .width(768)
         .height(380)
         .margins({top: 30, right: 50, bottom: 40, left: 60})
@@ -24,5 +24,5 @@ d3.json('program_data.json', function(error, data) {
         .outerPadding(0.05)
         .group(sumGroup);
 
-    chart.render();
+    attendance_chart.render();
 });

@@ -1,7 +1,7 @@
 from __future__ import division, print_function
 
 import datetime
-from json import dumps
+from json import dumps, load
 import re
 import os
 
@@ -127,6 +127,18 @@ DONATIONS = {"donations_over_time":
                 SELECT SUBSTRING(donation_date::varchar,1,7) as month, SUM(donation_amount) FROM donations
                 WHERE program_ind=0 and donation_date between '{dt_start}' and '{dt_end}'
                 GROUP BY 1 ORDER BY 1 asc
+                """,
+             "top_donors":
+             """
+                SELECT first_name, last_name, sum(donation_amount) from donations
+                where program_ind=0 and first_name is not null --donation_date between '{dt_start}' and '{dt_end}'
+                GROUP BY 1 ,2 order by 3 desc limit 5
+                """,
+             "top_funders":
+             """
+                SELECT company_name, sum(donation_amount) from donations
+                where program_ind=1 and company_name is not null --donation_date between '{dt_start}' and '{dt_end}'
+                GROUP BY 1 order by 2 desc limit 5
                 """}
 
 MEMBERS = {"membership_over_time":
@@ -221,6 +233,13 @@ def member_api():
     metrics = get_from_database_dict(MEMBERS)
 
     return dumps(metrics)
+
+
+@app.route("/twitter_api")
+def twitter_api():
+    with open('/home/ubuntu/gift_the_code/app/static/tweets.json', 'r') as rf:
+        tweets = load(rf)
+    return dumps(dict(data=tweets))
 
 
 @app.route("/donation_api")

@@ -111,8 +111,8 @@ function refresh_charts(program_value) {
             return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
           }
         
-        $("#attendance")[0].innerText = numberWithCommas(data.data.attendance_by_program[0].attendee_count)
-        $("#funding")[0].innerText = "$" + numberWithCommas(Math.round(data.data.funding_by_program[0].donations,3))
+        $("#attendance")[0].innerHTML = "<i class='fa fa-users'></i> " + numberWithCommas(data.data.attendance_by_program[0].attendee_count)
+        $("#funding")[0].innerText = "$ " + numberWithCommas(Math.round(data.data.funding_by_program[0].donations,3))
     
         chart.render();
     });

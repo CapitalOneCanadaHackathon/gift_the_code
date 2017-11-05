@@ -21,7 +21,7 @@ function refresh_charts() {
 
         chart
           .width(768)
-          .height(480)
+          .height(330)
           .dimension(dateDim)
           .x(d3.time.scale().domain([minDate,maxDate]))
           .brushOn(false)
@@ -37,6 +37,46 @@ function refresh_charts() {
           .legend(dc.legend().x(90).y(30).itemHeight(13).gap(5))
 
         dc.renderAll();
+
+        function numberWithCommas(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+          }
+        
+        var donors = [];
+        donors.push("<div>");
+        donor_data = data.data.top_donors
+    
+        $.each(donor_data, function(i) {
+          d = donor_data[i]
+          console.log(d)
+      
+          var num = '$ ' + numberWithCommas(Math.ceil(d.sum));
+          
+          var item = "<div class='col-sm-12 col-md-12'><div class='row'><div class='col-sm-4 col-md-4 value'>";
+          item = item + num + "</div><div class='key col-sm-8 col-md-8 donor-name'>" + d.first_name + ' ' + d.last_name + "</div></div></div>";
+          donors.push(item);
+    
+        });
+        donors.push("</div>");
+        $("#top_donors").append(donors);
+        
+        var funders = [];
+        funders.push("<div>");
+        funder_data = data.data.top_funders
+    
+        $.each(funder_data, function(i) {
+          d = funder_data[i]
+          console.log(d)
+      
+          var num = '$ ' + numberWithCommas(Math.ceil(d.sum));
+          
+          var item = "<div class='col-sm-12 col-md-12'><div class='row'><div class='col-sm-4 col-md-4 value'>";
+          item = item + num + "</div><div class='key col-sm-8 col-md-8 donor-name'>" + d.company_name + "</div></div></div>";
+          funders.push(item);
+    
+        });
+        funders.push("</div>");
+        $("#top_funders").append(funders);
       });
 };
 

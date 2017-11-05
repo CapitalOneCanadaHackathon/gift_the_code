@@ -9,9 +9,17 @@
 <!-- <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}"> -->
 <link rel="stylesheet" href="{{ url_for('static', filename='dc.css') }}">
 
-<div class="data-vis" id="donation_ts">
- 
+<div class="data-vis col-md-6" style='float:left'>
+ <h2>Donor Residence Heatmap</h2><br>
+ <img src="{{ url_for('static', filename='donation_heatmap.png') }}" style='width:110%'>
 </div>
+<div class="data-vis col-md-6" style='float:right'>
+        <div id="donation_ts" ><h2>Donations over Time</h2></div>
+        <div id='top_donors' style='float:left; width:50%'><h2>Top Donors</h2>
+        </div>
+        <div id='top_funders' style='float:right; width:50%'><h2>Top Funders</h2>
+        </div>
+       </div>
 <script src="{{ url_for('static', filename='js/donation.js') }}"></script>
 <script>$($(".menu li a")[4]).css("color", "#61BCB2");</script>
 {% endblock content %}

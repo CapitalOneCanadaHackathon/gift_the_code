@@ -15,8 +15,16 @@
           <h2>Top 6 Events</h2> 
       </div>
   </div>
+  <div></div>
 
-  <script>
+  <div class="data-vis col-sm-12 col-md-12" id="word_cloud" >
+    <h2>Twitter Keyword Analysis</h2><br><br>
+    <div style='width:80%; margin:auto'>
+        <img src="{{ url_for('static', filename='519_wordcloud.png') }}" style='width:100%;'>
+    </div>
+    
+    </div>  
+    <script>
   function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
