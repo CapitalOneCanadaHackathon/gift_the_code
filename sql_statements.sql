@@ -27,11 +27,12 @@ from donations
 -------- THIRD PAGE --------
 
 --top 5 visited events
+SELECT * FROM (
 SELECT event_name,event_dt, attendee_count FROM (
 SELECT event_id, event_name,event_dt, COUNT(*) as attendee_count FROM events
 WHERE program_ind = 0 GROUP BY 1,2,3
 ) a
-ORDER BY attendee_count DESC LIMIT 5
+ORDER BY attendee_count DESC) b limit 5
 
 -------- FOURTH PAGE ---------
 
