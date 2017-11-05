@@ -3,21 +3,43 @@
 {% block content %}
 
 <div class="data-vis">
- 
-</div>
-<script>
+  <script src="{{ url_for('static', filename='d3.js') }}"></script>
+  <script src="{{ url_for('static', filename='crossfilter.js') }}"></script>
+  <script src="{{ url_for('static', filename='dc.js') }}"></script>
+  
+  <!-- <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}"> -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='dc.css') }}">
+  
+  <div class="data-vis col-sm-12 col-md-12" id="top_evts">
+      <div class="graph-header">
+          <h2>Top 6 Events</h2> 
+      </div>
+  </div>
+
+  <script>
+  function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
   $.getJSON("/event_api", function(data) {
-    console.log(data);
     var items = [];
-    $.each( data.data, function( key, value) {
-      console.log(key);
-      console.log(value);
-      items.push("<div class='column-header'>" + key + "</div>");
+    items.push("<div class='row'>");
+    console.log(data.data.top_five_evts)
+
+    $.each(data.data.top_five_evts, function(i) {
+      evt = data.data.top_five_evts[i]
+  
+      var num = numberWithCommas(Math.ceil(evt.attendee_count));
+      
+      var item = "<div class='summary-small col-sm-4 col-md-2'><div class='value-small'>";
+        item = item + "<i class='fa fa-users'></i>  ";
+      item = item + num + "</div><div class='key-small'>" + evt.event_name + "</div></div>";
+      items.push(item);
+
     });
-    $(".data-vis").append(items);
-  });
-  $($(".menu li a")[2]).css("color", "#61BCB2");
-</script>
-
-
+    items.push("</div>");
+    $("#top_evts").append(items);
+  });</script>
+  <script>$($(".menu li a")[2]).css("color", "#61BCB2");</script>
+  
 {% endblock content %}
