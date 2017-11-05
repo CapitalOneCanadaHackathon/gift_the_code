@@ -4,16 +4,12 @@
 {% block content %}
 
 <div class='index'>
-    WORDS
-    
 </div>
 <script>
   $.getJSON("/summary_api", function(data) {
     var items = [];
     $.each(data.data, function(key, value) {
-      var item = "<div class='summary'><div class='value'>"+value+"</div></div>";
-      console.log(key);
-      console.log(value);
+      var item = "<div class='summary'><div class='value'>"+Math.ceil(value[0][0])+"</div><div class='key'>"+key+"</div></div>";
       items.push(item);
     });
     $(".index").append(items);
