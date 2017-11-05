@@ -70,6 +70,10 @@ a {
   padding: 40px 40px;
 }
 
+.content * {
+  margin: auto;
+}
+
 .navbar.subnav {
   background-color: #3C3565;
   display: block;
@@ -102,5 +106,9 @@ a {
 
 input[type=file] {
   display:none;
+}
+
+.summary {
+  
 }
 

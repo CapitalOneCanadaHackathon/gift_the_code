@@ -159,7 +159,16 @@ MEMBERS = {"membership_over_time":
                         else '40 +' end age_range, sum(count) count from
             (SELECT (CURRENT_DATE - birth_date)/365::int as age, COUNT(*)::int count FROM members
                             GROUP BY 1) a group by 1 order by 1--{dt_start} {dt_end}
-                """}
+                """,
+           "membership_length":
+           """select case 
+                    when membership_length > 4 then '0 - 2 years'
+                    when membership_length > 3 then '2 - 4 years'
+                    when membership_length > 2 then '4 - 6 years'
+                    when membership_length > 0 then '6 - 8 years' 
+                    else '8+ years' end membership_age_range, count(*) count
+            from members group by 1 order by 1;--{dt_start} {dt_end}
+            """}
 
 
 @app.route("/")
