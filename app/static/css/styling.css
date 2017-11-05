@@ -63,14 +63,16 @@ a {
   color: black;
   margin: 0 15px;
   font-size: 12px;
+  font-weight: 700;
   letter-spacing: 1px;
 }
 
-.index {
+.content {
   background-color: #595097;
   width: 100%;
   color: white;
   height: 500px;
+  padding: 40px 40px;
 }
 
 .navbar.subnav {
@@ -106,3 +108,4 @@ a {
 input[type=file] {
   display:none;
 }
+
