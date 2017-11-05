@@ -83,8 +83,18 @@ SUMMARY = {"ttl_donation": "SELECT sum(donation_amount) donation_amt FROM donati
            }
 
 
+PROGRAM_SUMMARY = {"attendance_by_program":
+                   """SELECT event_name, round(sum((1400 - ( current_date - event_dt)) * 20.00 /1400))::int as attendee_count FROM events
+                    WHERE program_ind=1 GROUP BY 1 ORDER BY attendee_count desc
+                    """,
+                   "funding_by_program":
+                   """
+                    SELECT program_funded, SUM(donation_amount) as donations FROM 
+                    donations WHERE program_ind=1 GROUP BY 1 ORDER BY donations desc
+                    """}
+
 PROGRAMS_ = {"attendance_by_program":
-             """SELECT event_name, round(sum((1400 - ( current_date - event_dt)) * 1.00 /1400))::int as attendee_count FROM events
+             """SELECT event_name, round(sum((1400 - ( current_date - event_dt)) * 20.00 /1400))::int as attendee_count FROM events
                 WHERE program_ind=1 and event_name = '{program}'
                 GROUP BY 1 ORDER BY attendee_count desc
                 """,
@@ -97,7 +107,7 @@ PROGRAMS_ = {"attendance_by_program":
              "time_series":
              """
                 select a.event_name, b.month, attendance, donations from
-                (SELECT event_name,SUBSTRING(event_dt::varchar,1,7) as month, round(sum((1400 - ( current_date - event_dt)) * 1.00 /1400))::int as attendance FROM events
+                (SELECT event_name,SUBSTRING(event_dt::varchar,1,7) as month, round(sum((1400 - ( current_date - event_dt)) * 20.00 /1400))::int as attendance FROM events
                 WHERE program_ind=1 and event_name = '{program}'
                 GROUP BY 1,2) a join 
                 (SELECT program_funded,SUBSTRING(donation_date::varchar,1,7) as month, SUM(donation_amount) donations FROM donations
@@ -107,10 +117,9 @@ PROGRAMS_ = {"attendance_by_program":
 
 EVENTS = {"top_five_evts":
           """
-            SELECT event_name,event_dt::varchar, attendee_count FROM (
-            SELECT event_id, event_name,event_dt, COUNT(*) as attendee_count FROM events
-            WHERE program_ind = 0 and event_dt between '{dt_start}' and '{dt_end}' GROUP BY 1,2,3
-            ) a ORDER BY attendee_count DESC LIMIT 5
+            SELECT event_name, round(sum((1400 - ( current_date - event_dt)) * 20.00 /1400))::int as attendee_count FROM events
+            WHERE program_ind = 0 and event_dt between '{dt_start}' and '{dt_end}' GROUP BY 1
+            ORDER BY attendee_count DESC LIMIT 6
             """}
 
 DONATIONS = {"donations_over_time":
@@ -186,6 +195,16 @@ def program_api():
     cxn = pg_connect()
     output = dict(data={k: cxn.query_dict(v.format(program=program))
                         for k, v in PROGRAMS_.items()})
+    cxn.close()
+
+    return dumps(output)
+
+
+@app.route('/program_summary_api')
+def program_summary_api():
+    cxn = pg_connect()
+    output = dict(data={k: cxn.query_dict(v)
+                        for k, v in PROGRAM_SUMMARY.items()})
     cxn.close()
 
     return dumps(output)

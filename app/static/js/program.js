@@ -1,3 +1,30 @@
+$.getJSON("/program_summary_api", function(data) {
+    var funding_chart = dc.barChart('#program_funding');
+
+    var funding_data = data.data.funding_by_program,
+        sndx1            = crossfilter(funding_data),
+        programDimension = sndx1.dimension(function(d) {return d.program_funded;}),
+        sumGroup         = programDimension.group().reduceSum(function(d) {return d.donations;});
+
+    funding_chart
+        .width(850)
+        .height(330)
+        .margins({top: 30, right: 50, bottom: 40, left: 60})
+        .x(d3.scale.ordinal())
+        .xUnits(dc.units.ordinal)
+        .ordinalColors(['#595097'])
+        .brushOn(false)
+        .xAxisLabel('Program')
+        .yAxisLabel('Funding \(\$\)')
+        .dimension(programDimension)
+        .gap(10)
+        .barPadding(0.5)
+        .outerPadding(0.05)
+        .group(sumGroup);
+
+        funding_chart.render();
+});
+
 function refresh_charts(program_value) {
     $.getJSON("/program_api", {
         program: program_value
@@ -62,7 +89,7 @@ function refresh_charts(program_value) {
         $("#attendance")[0].innerText = numberWithCommas(data.data.attendance_by_program[0].attendee_count)
         $("#funding")[0].innerText = "$" + numberWithCommas(Math.round(data.data.funding_by_program[0].donations,3))
     
-        dc.renderAll();
+        chart.render();
     });
 };
 
