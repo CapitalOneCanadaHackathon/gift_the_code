@@ -1,5 +1,7 @@
-function refresh_charts() {
-    $.getJSON("/program_api", function(data) {
+function refresh_charts(program_value) {
+    $.getJSON("/program_api", {
+        program: program_value
+    }, function(data) {
         var chart = dc.compositeChart("#program_ts");
 
         var data = data
@@ -51,9 +53,26 @@ function refresh_charts() {
         .yAxisLabel("Funding \(\$\)")
         .xAxisLabel("Date")
         .legend(dc.legend().x(90).y(30).itemHeight(13).gap(5))
+        console.log(data.data)
+
+        function numberWithCommas(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+          }
+        
+        $("#attendance")[0].innerText = numberWithCommas(data.data.attendance_by_program[0].attendee_count)
+        $("#funding")[0].innerText = "$" + numberWithCommas(Math.round(data.data.funding_by_program[0].donations,3))
     
         dc.renderAll();
     });
 };
 
-refresh_charts()
+$('#program').change(function() {
+    var program_value = $('#program')[0].value
+    refresh_charts(program_value)
+})
+
+var program_value = $('#program')[0].value
+
+refresh_charts(program_value)
+
+

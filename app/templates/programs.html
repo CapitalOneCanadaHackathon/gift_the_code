@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+{% from "_formhelpers.html" import render_field %}
 
 {% block content %}
 
@@ -11,14 +12,15 @@
 
 <div class="data-vis col-xs-5 col-md-8" id="program_ts">
         <h2>Program Funding and Attendance</h2> 
+        <div style='float:right; padding-right:40px'>{{ render_field(form.program, class_="form-control") }}</div>
 </div>
 <div class="data-vis col-xs-5 col-md-4" id="program_ts">
         <h2>Year to Date</h2> 
         <div class='summary-small'>
-            <span class='value-small' id='attendance'>2,365</span> <br>
+            <span class='value-small' id='attendance'></span> <br>
             <span class='key-small'>Attendance</span><br>
             <br><br>
-            <span class='value-small' id='funding'>$32,917.12</span> <br>
+            <span class='value-small' id='funding'></span> <br>
             <span class='key-small'>Funding</span><br>
         </div>
 </div>

@@ -14,8 +14,6 @@ from flask_login import (LoginManager, UserMixin, current_user,
 
 from app import app
 
-import flask_excel as excel
-
 from .forms import QueryForm
 from .database_operations import pg_connect
 # from .models import Account
@@ -85,50 +83,25 @@ SUMMARY = {"ttl_donation": "SELECT sum(donation_amount) donation_amt FROM donati
            }
 
 
-PROGRAMS = {"attendance_by_program":
-            """SELECT event_name, COUNT(*) * (1400 - ( current_date - event_dt)) * 1.00 /1400 as attendee_count FROM events
-                WHERE program_ind=1 and event_dt between '{dt_start}' and '{dt_end}'
-                GROUP BY 1 ORDER BY attendee_count desc
-                """,
-            "funding_by_program":
-                """
-                SELECT program_funded, SUM(donation_amount) as donations FROM 
-                donations WHERE program_ind=1 and donation_date between '{dt_start}' and '{dt_end}'
-                GROUP BY 1 ORDER BY donations desc
-                """,
-            "attendance_time_series":
-                """
-                SELECT event_name,SUBSTRING(event_dt::varchar,1,7) as month, COUNT(*) * (1400 - ( current_date - event_dt)) * 1.00 /1400 as attendance FROM events
-                WHERE program_ind=1-- and event_dt between '{dt_start}' and '{dt_end}'
-                GROUP BY 1,2 ORDER BY 1 asc,2 asc
-                """,
-            "funding_time_series":
-                """
-                SELECT program_funded,SUBSTRING(donation_date::varchar,1,7) as month, SUM(donation_amount) FROM donations
-                WHERE program_ind=1 and donation_date between '{dt_start}' and '{dt_end}'
-                GROUP BY 1,2 ORDER BY 1 asc,2 asc
-                """}
-
-
 PROGRAMS_ = {"attendance_by_program":
              """SELECT event_name, round(sum((1400 - ( current_date - event_dt)) * 1.00 /1400))::int as attendee_count FROM events
-                WHERE program_ind=1 and event_dt between '{dt_start}' and '{dt_end}'
+                WHERE program_ind=1 and event_name = '{program}'
                 GROUP BY 1 ORDER BY attendee_count desc
                 """,
              "funding_by_program":
              """
                 SELECT program_funded, SUM(donation_amount) as donations FROM 
-                donations WHERE program_ind=1 and donation_date between '{dt_start}' and '{dt_end}'
+                donations WHERE program_ind=1 and program_funded = '{program}'
                 GROUP BY 1 ORDER BY donations desc
                 """,
              "time_series":
              """
                 select a.event_name, b.month, attendance, donations from
                 (SELECT event_name,SUBSTRING(event_dt::varchar,1,7) as month, round(sum((1400 - ( current_date - event_dt)) * 1.00 /1400))::int as attendance FROM events
-                WHERE program_ind=1
+                WHERE program_ind=1 and event_name = '{program}'
                 GROUP BY 1,2) a join 
                 (SELECT program_funded,SUBSTRING(donation_date::varchar,1,7) as month, SUM(donation_amount) donations FROM donations
-                WHERE program_ind=1
+                WHERE program_ind=1 and program_funded = '{program}'
                 GROUP BY 1,2) b on a.event_name = b.program_funded and a.month = b.month
                 """}
 
@@ -188,7 +161,8 @@ def summary_api():
 
 @app.route("/programs")
 def programs():
-    return render_template("programs.html", title="Programs")
+    form = QueryForm(request.form)
+    return render_template("programs.html", title="Programs", form=form)
 
 
 @app.route("/events")
@@ -208,17 +182,13 @@ def donations():
 
 @app.route("/program_api")
 def program_api():
-    # metrics = get_from_database(PROGRAMS)
-    # for chart in metrics['data']:
-    #     if len(metrics['data'][chart][0]) == 2:
-    #         metrics['data'][chart] = two_axes_chart(
-    #             metrics['data'][chart], 'bar')
+    program = request.args.get('program', 'Housing')
+    cxn = pg_connect()
+    output = dict(data={k: cxn.query_dict(v.format(program=program))
+                        for k, v in PROGRAMS_.items()})
+    cxn.close()
 
-    #     elif len(metrics['data'][chart][0]) == 3:
-    #         metrics['data'][chart] = three_axes_chart(
-    #             metrics['data'][chart])
-    metrics = get_from_database_dict(PROGRAMS_)
-    return dumps(metrics)
+    return dumps(output)
 
 
 @app.route("/event_api")
@@ -247,59 +217,3 @@ def upload():
     #     print(sheet)
     #     return render_template("index.html")
     return render_template("index.html")
-
-# @app.route("/login", methods=["GET", "POST"])
-# def login():
-#     next = request.args.get("next")
-
-#     # app.logger.debug("Arrived at login page... Next: %s" %(next))
-#     if current_user is not None and current_user.is_authenticated:
-#         app.logger.info("Already logged in, redirecting to home page")
-#         return redirect(url_for("index"))
-
-#     elif request.method == "POST":
-#         # validate username and password
-#         eid = request.form["eid"].lower()
-#         app.logger.info("Attempting to log in %s... Next: %s" % (eid, next))
-
-#         # create the user via ldap
-#         account = Account.get_via_ldap(eid, request.form["pwd"])
-#         if(account):
-#             groups = "|".join(account.groups(eid))
-#             if "IRIS" in groups or "PHDP" in groups:
-#                 app.logger.info("Logging in %s..." % (eid))
-#                 login_user(account)
-#                 # Tell Flask-Principal the identity changed
-#                 identity_changed.send(app, identity=Identity(account.id))
-
-#                 app.logger.debug("Is %s authenticated? %s" %
-#                                  (eid, account.is_authenticated()))
-#                 app.logger.info("Logged in successfully")
-
-#                 # next_is_valid should check if the user has valid
-#                 # permission to access the `next` url
-#                 if not next_is_valid(next):
-#                     return abort(400)
-
-#                 return redirect(next or url_for("index"))
-#             else:
-#                 app.logger.warning(
-#                     "Could not log in %s. Invalid AD groups!" % (eid)
-#                 )
-#                 flash("Invalid credentials, please apply for IRIS access", "danger")
-#         else:
-#             app.logger.warning(
-#                 "Could not log in %s. Invalid credentials!" % (eid))
-#             flash("Invalid username or password.", "danger")
-
-#     return render_template("login.html")
-
-
-# @app.route("/logout")
-# def logout():
-#     app.logger.info("Attempting to log out...")
-#     eid = current_user.id
-#     logout_user()
-#     app.logger.info("Logged out %s successfully" % (eid))
-#     flash("Logged out successfully.", "success")
-#     return redirect(url_for("login"))
