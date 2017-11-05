@@ -142,7 +142,7 @@ EVENTS = {"top_five_evts":
 DONATIONS = {"donations_over_time":
              """
                 SELECT SUBSTRING(donation_date::varchar,1,7) as month, SUM(donation_amount) FROM donations
-                WHERE program_ind=1 and donation_date between '{dt_start}' and '{dt_end}'
+                WHERE program_ind=0 and donation_date between '{dt_start}' and '{dt_end}'
                 GROUP BY 1 ORDER BY 1 asc
                 """}
 

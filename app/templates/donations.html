@@ -2,21 +2,16 @@
 
 {% block content %}
 
-<div class="data-vis">
+<script src="{{ url_for('static', filename='d3.js') }}"></script>
+<script src="{{ url_for('static', filename='crossfilter.js') }}"></script>
+<script src="{{ url_for('static', filename='dc.js') }}"></script>
+
+<!-- <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}"> -->
+<link rel="stylesheet" href="{{ url_for('static', filename='dc.css') }}">
+
+<div class="data-vis" id="donation_ts">
  
 </div>
-<script>
-  $.getJSON("/donation_api", function(data) {
-    console.log(data);
-    var items = [];
-    $.each( data.data, function( key, value) {
-      console.log(key);
-      console.log(value);
-      items.push("<div class='column-header'>" + key + "</div>");
-    });
-    $(".data-vis").append(items);
-  });
-</script>
-
+<script src="{{ url_for('static', filename='js/donation.js') }}"></script>
 
 {% endblock content %}

@@ -36,13 +36,14 @@ function refresh_charts() {
                     .valueAccessor(function (d) {
                         return d.value;
                     })
-                    .interpolate('basis-open'),
+                    .interpolate('basis-open')
+                    .ordinalColors(['#595097']),
             dc.lineChart(chart)
                     .group(attendance_sum, "Attendance")
                     .valueAccessor(function (d) {
                         return d.value;
                     })
-                    .ordinalColors(["orange"])
+                    .ordinalColors(["#61BCB2"])
                     .useRightYAxis(true)
                     .interpolate('basis-open')
                 ])

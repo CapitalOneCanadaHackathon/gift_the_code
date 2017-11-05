@@ -1,6 +1,6 @@
 function refresh_charts() {
     $.getJSON("/donation_api", function(data) {
-        var chart = dc.compositeChart("#donation_ts");
+        var chart = dc.lineChart("#donation_ts");
 
         var data = data;
         var dateFormat = d3.time.format("%Y-%m");
@@ -26,14 +26,18 @@ function refresh_charts() {
           .x(d3.time.scale().domain([minDate,maxDate]))
           .brushOn(false)
           .elasticY(true)
-          .renderHorizontalGridLines(true)
+          //.renderHorizontalGridLines(true)
           .renderVerticalGridLines(true)
           .margins({top: 30, right: 50, bottom: 40, left: 60})
           .group(donation_sum, "Donations \(\$\)")
-          .valueAccessor(function (d) {return d.value;}).interpolate('basis-open')
+          .valueAccessor(function (d) {return d.value;})
+          .interpolate('basis-open').ordinalColors(['#595097'])
           .yAxisLabel("Donations \(\$\)")
           .xAxisLabel("Date")
           .legend(dc.legend().x(90).y(30).itemHeight(13).gap(5))
 
         dc.renderAll();
       });
+};
+
+refresh_charts()
