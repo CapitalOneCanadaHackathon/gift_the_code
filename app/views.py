@@ -142,7 +142,7 @@ EVENTS = {"top_five_evts":
 DONATIONS = {"donations_over_time":
              """
                 SELECT SUBSTRING(donation_date::varchar,1,7) as month, SUM(donation_amount) FROM donations
-                WHERE program_ind=1 and donation_date between '{dt_start}' and '{dt_end}'
+                WHERE program_ind=0 and donation_date between '{dt_start}' and '{dt_end}'
                 GROUP BY 1 ORDER BY 1 asc
                 """}
 
@@ -152,10 +152,23 @@ MEMBERS = {"membership_over_time":
                 GROUP BY 1 ORDER BY 1--{dt_start} {dt_end}
                 """,
            "age_of_members":
-           """
-                SELECT (CURRENT_DATE - birth_date)/365::int as age, COUNT(*) FROM members
-                GROUP BY 1 ORDER BY 1 ASC--{dt_start} {dt_end}
-                """}
+           """select case when age < 25 then '< 25'
+                        when age < 30 then '25 - 29'
+                        when age < 35 then '30 - 34'
+                        when age < 40 then '35 - 39'
+                        else '40 +' end age_range, sum(count) count from
+            (SELECT (CURRENT_DATE - birth_date)/365::int as age, COUNT(*)::int count FROM members
+                            GROUP BY 1) a group by 1 order by 1--{dt_start} {dt_end}
+                """,
+           "membership_length":
+           """select case 
+                    when membership_length > 4 then '0 - 2 years'
+                    when membership_length > 3 then '2 - 4 years'
+                    when membership_length > 2 then '4 - 6 years'
+                    when membership_length > 0 then '6 - 8 years' 
+                    else '8+ years' end membership_age_range, count(*) count
+            from members group by 1 order by 1;--{dt_start} {dt_end}
+            """}
 
 
 @app.route("/")

@@ -1,6 +1,6 @@
 function refresh_charts() {
     $.getJSON("/member_api", function(data) {
-        var chart = dc.compositeChart("#donation_ts");
+        var chart = dc.lineChart("#member_ts");
 
         var data = data;
         var dateFormat = d3.time.format("%Y-%m");
@@ -14,25 +14,31 @@ function refresh_charts() {
         });
 
         var dateDim = ndx.dimension(function (d) {return d.dd;});
-        var donation_sum = dateDim.group().reduceSum(function(d) {return d.sum;});
+        var member_sum = dateDim.group().reduceSum(function(d) {return d.count;});
 
         var minDate = dateDim.bottom(1)[0].dd;
         var maxDate = dateDim.top(1)[0].dd;
 
         chart
-          .width(768)
+          .width(1200)
           .height(480)
           .dimension(dateDim)
           .x(d3.time.scale().domain([minDate,maxDate]))
           .brushOn(false)
           .elasticY(true)
-          .renderHorizontalGridLines(true)
+          //.renderHorizontalGridLines(true)
           .renderVerticalGridLines(true)
           .margins({top: 30, right: 50, bottom: 40, left: 60})
-          .group(donation_sum, "Total number of registered members")
+          .group(member_sum, "Total number of registered members")
           .valueAccessor(function (d) {return d.value;}).interpolate('basis-open')
+          .ordinalColors(['#595097'])
           .yAxisLabel("Total number of registered members")
           .xAxisLabel("Date")
 
         dc.renderAll();
+
+        // d3.select("#member_ts").attr("align","center");
       });
+    };
+
+refresh_charts()
