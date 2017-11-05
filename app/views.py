@@ -5,6 +5,9 @@ from json import dumps
 import re
 import os
 
+from itertools import groupby
+from operator import itemgetter
+from pprint import pprint
 from flask import flash, jsonify, redirect, render_template, request, url_for
 from flask_login import (LoginManager, UserMixin, current_user,
                          login_required, login_user, logout_user)
@@ -33,10 +36,35 @@ def load_user(eid):
 
 def get_from_database(metrics, dt_start='2010-01-01', dt_end='2099-01-01'):
     cxn = pg_connect()
+    output = dict(data={k: cxn.query(v.format(dt_start=dt_start,
+                                              dt_end=dt_end)) for k, v in metrics.items()})
+    cxn.close()
+    return output
+
+
+def get_from_database_dict(metrics, dt_start='2010-01-01', dt_end='2099-01-01'):
+    cxn = pg_connect()
     output = dict(data={k: cxn.query_dict(v.format(dt_start=dt_start,
                                                    dt_end=dt_end)) for k, v in metrics.items()})
     cxn.close()
     return output
+
+
+def two_axes_chart(data, type):
+    x, y = zip(*data)
+    return dict(data=[dict(x=x, y=y, type=type)])
+
+
+def three_axes_chart(data):
+    groups = groupby(sorted(data, key=lambda x: x[0]), key=itemgetter(0))
+    traces = [{'name': k, 'type': 'scatter',  'mode': 'lines',
+               'data': [x[1:] for x in v]} for k, v in groups]
+    for trace in traces:
+        trace['x'] = [x[0] for x in trace['data']]
+        trace['y'] = [x[1] for x in trace['data']]
+        del trace['data']
+    return traces
+
 
 SUMMARY = {"ttl_donation": "SELECT sum(donation_amount) donation_amt FROM donations WHERE donor_type='Individual' and donation_date between '{dt_start}' and '{dt_end}'",
            "ttl_funding": "SELECT sum(donation_amount) funding_amt FROM donations WHERE donor_type='Organization' and donation_date between '{dt_start}' and '{dt_end}'",
@@ -78,6 +106,29 @@ PROGRAMS = {"attendance_by_program":
                 SELECT program_funded,SUBSTRING(donation_date::varchar,1,7) as month, SUM(donation_amount) FROM donations
                 WHERE program_ind=1 and donation_date between '{dt_start}' and '{dt_end}'
                 GROUP BY 1,2 ORDER BY 1 asc,2 asc
+                """}
+
+
+PROGRAMS_ = {"attendance_by_program":
+             """SELECT event_name, COUNT(*) as attendee_count FROM events
+                WHERE program_ind=1 and event_dt between '{dt_start}' and '{dt_end}'
+                GROUP BY 1 ORDER BY attendee_count desc
+                """,
+             "funding_by_program":
+             """
+                SELECT program_funded, SUM(donation_amount) as donations FROM 
+                donations WHERE program_ind=1 and donation_date between '{dt_start}' and '{dt_end}'
+                GROUP BY 1 ORDER BY donations desc
+                """,
+             "time_series":
+             """
+                select a.event_name, b.month, attendance, donations from
+                (SELECT event_name,SUBSTRING(event_dt::varchar,1,7) as month, COUNT(*) as attendance FROM events
+                WHERE program_ind=1
+                GROUP BY 1,2) a join 
+                (SELECT program_funded,SUBSTRING(donation_date::varchar,1,7) as month, SUM(donation_amount) donations FROM donations
+                WHERE program_ind=1
+                GROUP BY 1,2) b on a.event_name = b.program_funded and a.month = b.month
                 """}
 
 EVENTS = {"top_five_evts":
@@ -143,8 +194,16 @@ def donations():
 
 @app.route("/program_api")
 def program_api():
-    metrics = get_from_database(PROGRAMS)
+    # metrics = get_from_database(PROGRAMS)
+    # for chart in metrics['data']:
+    #     if len(metrics['data'][chart][0]) == 2:
+    #         metrics['data'][chart] = two_axes_chart(
+    #             metrics['data'][chart], 'bar')
 
+    #     elif len(metrics['data'][chart][0]) == 3:
+    #         metrics['data'][chart] = three_axes_chart(
+    #             metrics['data'][chart])
+    metrics = get_from_database_dict(PROGRAMS_)
     return dumps(metrics)
 
 
