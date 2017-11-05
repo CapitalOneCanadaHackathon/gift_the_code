@@ -22,13 +22,6 @@ a {
   /*position: fixed;*/
 }
 
-.navbar img {
-  display: inline-block;
-  float: left;
-  border: 0;
-  vertical-align: middle;
-}
-
 .navbar .pun {
   vertical-align: middle;
   margin-left: 10px;
@@ -44,6 +37,8 @@ a {
   border: none;
   height: 50px;
   width: 100px;
+  display: block;
+  float: left;
   margin-left: 20px;
 }
 
