@@ -6,13 +6,30 @@
 <div class='index'>
 </div>
 <script>
+  var dict = {
+    "funders": { "currency": false, "str": "Funders"},
+    "ttl_funding": { "currency": true, "str": "Funding"},
+    "programs": { "currency": false, "str": "Programs"},
+    "evts": { "currency": false, "str": "Events"},
+    "donors": { "currency": false, "str": "Donors"},
+    "ttl_donation": { "currency": true, "str": "Donations"}
+  }
+  function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
   $.getJSON("/summary_api", function(data) {
     var items = [];
-    $.each(data.data, function(idx, key, value) {
-      console.log(idx);
-      var item = "<div class='row'><div class='summary'><div class='value'>"+Math.ceil(value[0][0])+"</div><div class='key'>"+key+"</div></div></div>";
+    items.push("<div class='row'>");
+    $.each(data.data, function(key, value) {
+      var num = numberWithCommas(Math.ceil(value[0][0]));
+      if (dict[key]["currency"]) {
+        num = "$" + num;
+      }
+      var item = "<div class='summary col-sm-4'><div class='value'>"+num+"</div><div class='key'>"+dict[key]["str"]+"</div></div>";
       items.push(item);
     });
+    items.push("</div>");
     $(".index").append(items);
   });
 </script>
