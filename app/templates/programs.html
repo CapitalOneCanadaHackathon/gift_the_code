@@ -11,8 +11,10 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='dc.css') }}">
 
 <div class="data-vis col-xs-5 col-md-8" id="program_ts">
+    <div class="graph-header">
         <h2>Program Funding and Attendance</h2> 
-        <div style='float:right; padding-right:40px'>{{ render_field(form.program, class_="form-control") }}</div>
+        <div class="graph-dropdown">{{ render_field(form.program, class_="form-control") }}</div>
+    </div>
 </div>
 <div class="data-vis col-xs-5 col-md-4" id="program_ts">
         <h2>Year to Date</h2> 

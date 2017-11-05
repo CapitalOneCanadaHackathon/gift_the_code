@@ -112,6 +112,17 @@ input[type=file] {
   display:none;
 }
 
+.graph-header h2 {
+  position: relative;
+  float: left;
+}
+
+.graph-header .graph-dropdown {
+  position: relative;
+  float:right; 
+  padding-right:40px;
+}
+
 .summary {
   margin: 115px 0;
 }
