@@ -161,9 +161,10 @@ MEMBERS = {"membership_over_time":
 @app.route("/")
 @app.route("/index", methods=["GET", "POST"])
 def index():
-    # metrics = get_from_database(SUMMARY)
+    metrics = get_from_database(SUMMARY)
     return render_template("index.html",
-			    metrics=dumps(metrics), title="Overview")
+                           metrics=dumps(metrics), title="Overview")
+
 
 @app.route("/summary_api")
 def summary_api():
