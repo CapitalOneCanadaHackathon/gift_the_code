@@ -68,8 +68,8 @@ def three_axes_chart(data):
 
 SUMMARY = {"ttl_donation": "SELECT sum(donation_amount) donation_amt FROM donations WHERE donor_type='Individual' and donation_date between '{dt_start}' and '{dt_end}'",
            "ttl_funding": "SELECT sum(donation_amount) funding_amt FROM donations WHERE donor_type='Organization' and donation_date between '{dt_start}' and '{dt_end}'",
-           "programs": "SELECT count(*) FROM events WHERE program_ind = 1 and event_dt between '{dt_start}' and '{dt_end}'",
-           "evts": "SELECT count(*) from events where program_ind = 0 and event_dt between '{dt_start}' and '{dt_end}'",
+           "programs": "SELECT round(sum((1400 - ( current_date - event_dt)) * 1.00 /1400))::int as count FROM events WHERE program_ind = 1 and event_dt between '{dt_start}' and '{dt_end}'",
+           "evts": "SELECT round(sum((1400 - ( current_date - event_dt)) * 1.00 /1400))::int as count from events where program_ind = 0 and event_dt between '{dt_start}' and '{dt_end}'",
            "donors":
            """
                 SELECT member_count + non_member_count as donors from
@@ -85,7 +85,7 @@ SUMMARY = {"ttl_donation": "SELECT sum(donation_amount) donation_amt FROM donati
 
 
 PROGRAMS = {"attendance_by_program":
-            """SELECT event_name, COUNT(*) as attendee_count FROM events
+            """SELECT event_name, COUNT(*) * (1400 - ( current_date - event_dt)) * 1.00 /1400 as attendee_count FROM events
                 WHERE program_ind=1 and event_dt between '{dt_start}' and '{dt_end}'
                 GROUP BY 1 ORDER BY attendee_count desc
                 """,
@@ -97,7 +97,7 @@ PROGRAMS = {"attendance_by_program":
                 """,
             "attendance_time_series":
                 """
-                SELECT event_name,SUBSTRING(event_dt::varchar,1,7) as month, COUNT(*) as attendance FROM events
+                SELECT event_name,SUBSTRING(event_dt::varchar,1,7) as month, COUNT(*) * (1400 - ( current_date - event_dt)) * 1.00 /1400 as attendance FROM events
                 WHERE program_ind=1-- and event_dt between '{dt_start}' and '{dt_end}'
                 GROUP BY 1,2 ORDER BY 1 asc,2 asc
                 """,
@@ -110,7 +110,7 @@ PROGRAMS = {"attendance_by_program":
 
 
 PROGRAMS_ = {"attendance_by_program":
-             """SELECT event_name, COUNT(*) as attendee_count FROM events
+             """SELECT event_name, round(sum((1400 - ( current_date - event_dt)) * 1.00 /1400))::int as attendee_count FROM events
                 WHERE program_ind=1 and event_dt between '{dt_start}' and '{dt_end}'
                 GROUP BY 1 ORDER BY attendee_count desc
                 """,
@@ -123,7 +123,7 @@ PROGRAMS_ = {"attendance_by_program":
              "time_series":
              """
                 select a.event_name, b.month, attendance, donations from
-                (SELECT event_name,SUBSTRING(event_dt::varchar,1,7) as month, COUNT(*) as attendance FROM events
+                (SELECT event_name,SUBSTRING(event_dt::varchar,1,7) as month, round(sum((1400 - ( current_date - event_dt)) * 1.00 /1400))::int as attendance FROM events
                 WHERE program_ind=1
                 GROUP BY 1,2) a join 
                 (SELECT program_funded,SUBSTRING(donation_date::varchar,1,7) as month, SUM(donation_amount) donations FROM donations
@@ -209,20 +209,20 @@ def program_api():
 
 @app.route("/event_api")
 def event_api():
-    metrics = get_from_database(EVENTS)
+    metrics = get_from_database_dict(EVENTS)
     return dumps(metrics)
 
 
 @app.route("/member_api")
 def member_api():
-    metrics = get_from_database(MEMBERS)
+    metrics = get_from_database_dict(MEMBERS)
 
     return dumps(metrics)
 
 
 @app.route("/donation_api")
 def donation_api():
-    metrics = get_from_database(DONATIONS)
+    metrics = get_from_database_dict(DONATIONS)
     return dumps(metrics)
 
 
