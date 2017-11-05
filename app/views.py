@@ -152,9 +152,13 @@ MEMBERS = {"membership_over_time":
                 GROUP BY 1 ORDER BY 1--{dt_start} {dt_end}
                 """,
            "age_of_members":
-           """
-                SELECT (CURRENT_DATE - birth_date)/365::int as age, COUNT(*) FROM members
-                GROUP BY 1 ORDER BY 1 ASC--{dt_start} {dt_end}
+           """select case when age < 25 then '< 25'
+                        when age < 30 then '25 - 29'
+                        when age < 35 then '30 - 34'
+                        when age < 40 then '35 - 39'
+                        else '40 +' end age_range, sum(count) count from
+            (SELECT (CURRENT_DATE - birth_date)/365::int as age, COUNT(*)::int count FROM members
+                            GROUP BY 1) a group by 1 order by 1--{dt_start} {dt_end}
                 """}
 
 
