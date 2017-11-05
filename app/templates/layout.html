@@ -6,6 +6,7 @@
   <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
   <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
   <link href=“https://fonts.googleapis.com/css?family=Roboto” rel=“stylesheet”>
   <link rel="stylesheet" type="text/css" href="static/css/normalize.css">
@@ -14,22 +15,24 @@
 
 <body class="container" bgcolor="FCFCFE">
   <nav class="navbar navbar-default navbar-static-top">
-    <a href="/"><img id="logo"/><div class="pun">Reports</div></a>
+    <a href="/"><img id="logo"/><div class="pun">Rainbow Road</div></a>
     <ul class="menu">
       <li><a href="/">HOME</a></li>
       <li><a href="/programs">PROGRAMS</a></li>
       <li><a href="/events">EVENTS</a></li>
       <li><a href="/members">MEMBERS</a></li>
       <li><a href="/donations">DONATIONS</a></li>
-      <li><a id="upload">UPLOAD</a><input type="file" id="uploadAction"/></li>
+      <li><a id="upload"><i class="fa fa-upload"></i>  UPLOAD</a><input type="file" id="uploadAction"/></li>
     </ul>
     </div>
   </nav>
   <div class="navbar subnav">
-    <div class="title">Overview</div>
+    <div class="title">{{ title }}</div>
     <div class="timeline">Nov 4 2016 - Nov 4, 2017</div>
   </div>
-  {% block content %}{% endblock %}
+  <div class="content">
+    {% block content %}{% endblock %}
+  </div>
 
 
 </body>

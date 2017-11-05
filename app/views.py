@@ -161,10 +161,9 @@ MEMBERS = {"membership_over_time":
 @app.route("/")
 @app.route("/index", methods=["GET", "POST"])
 def index():
-    metrics = get_from_database(SUMMARY)
+    # metrics = get_from_database(SUMMARY)
     return render_template("index.html",
-                           metrics=dumps(metrics))
-
+			    metrics=dumps(metrics), title="Overview")
 
 @app.route("/summary_api")
 def summary_api():
@@ -174,22 +173,22 @@ def summary_api():
 
 @app.route("/programs")
 def programs():
-    return render_template("programs.html")
+    return render_template("programs.html", title="Programs")
 
 
 @app.route("/events")
 def events():
-    return render_template("events.html")
+    return render_template("events.html", title="Events")
 
 
 @app.route("/members")
 def members():
-    return render_template("members.html")
+    return render_template("members.html", title="Members")
 
 
 @app.route("/donations")
 def donations():
-    return render_template("donations.html")
+    return render_template("donations.html", title="Donations")
 
 
 @app.route("/program_api")

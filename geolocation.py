@@ -4,7 +4,7 @@ import re
 
 geolocator = Nominatim()
 
-members = pd.read_excel('member_data.xlsx')
+members = pd.read_csv('members_new.csv')
 
 def gps_coordinates(data):
     try:
@@ -17,7 +17,7 @@ def gps_coordinates(data):
 
     return data
 
-members['full_address'] = members['address_line'] + ' , ' + members['city'] + ' , ' + members['state']
+#members['full_address'] = members['address_line'] + ' , ' + members['city'] + ' , ' + members['state']
 for index, row in members.iterrows():
     if re.search(r'\d+\s*\-\s*\d+', row['full_address']):
         row['full_address'] = re.split(r'\d+\s*\-',row['full_address'])[-1]
@@ -28,9 +28,13 @@ for index, row in members.iterrows():
 
 
 
-members = members.apply(gps_coordinates, axis=1)
+members.loc[members['latitude'].isnull()] = members.loc[members['latitude'].isnull()].apply(gps_coordinates, axis=1)
 
-writer = pd.ExcelWriter('members_new.xlsx', engine='xlsxwriter')
+members = members.drop(['full_address'], axis=1)
 
-# Convert the dataframe to an XlsxWriter Excel object.
-members.to_excel(writer, sheet_name='Sheet1', index = False)
+members.to_csv('members_new.csv')
+
+# writer = pd.ExcelWriter('members_new.xlsx', engine='xlsxwriter')
+#
+# # Convert the dataframe to an XlsxWriter Excel object.
+# members.to_excel(writer, sheet_name='Sheet1', index = False)
