@@ -15,7 +15,7 @@ $.getJSON("/program_summary_api", function(data) {
         .ordinalColors(['#595097'])
         .brushOn(false)
         .xAxisLabel('Program')
-        .yAxisLabel('Funding \(\$\)')
+        .yAxisLabel('Funding \(\$K\)')
         .dimension(programDimension)
         .gap(10)
         .barPadding(0.5)
@@ -23,6 +23,31 @@ $.getJSON("/program_summary_api", function(data) {
         .group(sumGroup);
 
         funding_chart.render();
+    
+    var attendance_chart = dc.barChart('#program_attendance');
+
+    var attendance_data   = data.data.attendance_by_program
+            sndx2            = crossfilter(attendance_data),
+            programDimension2 = sndx2.dimension(function(d) {return d.event_name;}),
+            sumGroup2       = programDimension2.group().reduceSum(function(d) {return d.attendee_count;});
+
+        attendance_chart
+            .width(850)
+            .height(330)
+            .margins({top: 30, right: 50, bottom: 40, left: 60})
+            .x(d3.scale.ordinal())
+            .xUnits(dc.units.ordinal)
+            .ordinalColors(['#61BCB2'])
+            .brushOn(false)
+            .xAxisLabel('Program')
+            .yAxisLabel('Attendance')
+            .dimension(programDimension2)
+            .gap(10)
+            .barPadding(0.5)
+            .outerPadding(0.05)
+            .group(sumGroup2);
+
+        attendance_chart.render();
 });
 
 function refresh_charts(program_value) {

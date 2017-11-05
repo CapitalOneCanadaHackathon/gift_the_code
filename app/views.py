@@ -89,7 +89,7 @@ PROGRAM_SUMMARY = {"attendance_by_program":
                     """,
                    "funding_by_program":
                    """
-                    SELECT program_funded, SUM(donation_amount) as donations FROM 
+                    SELECT program_funded, SUM(donation_amount)/1000 as donations FROM 
                     donations WHERE program_ind=1 GROUP BY 1 ORDER BY donations desc
                     """}
 
