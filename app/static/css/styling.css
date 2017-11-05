@@ -62,6 +62,10 @@ a {
   letter-spacing: 1px;
 }
 
+.navbar .menu > li > a:hover {
+  color: #61BCB2;
+}
+
 .content {
   background-color: white;
   width: 100%;
