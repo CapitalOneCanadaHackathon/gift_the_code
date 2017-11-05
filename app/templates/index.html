@@ -7,12 +7,12 @@
 </div>
 <script>
   var dict = {
-    "funders": { "currency": false, "str": "Funders"},
-    "ttl_funding": { "currency": true, "str": "Funding"},
-    "programs": { "currency": false, "str": "Programs"},
-    "evts": { "currency": false, "str": "Events"},
-    "donors": { "currency": false, "str": "Donors"},
-    "ttl_donation": { "currency": true, "str": "Donations"}
+    "funders": { "currency": false, "str": "Funder Count", "icon": "fa-building-o"},
+    "ttl_funding": { "currency": true, "str": "Funding Received"},
+    "programs": { "currency": false, "str": "Program Attendance", "icon": "fa-calendar"},
+    "evts": { "currency": false, "str": "Event Attendance", "icon": "fa-bullhorn"},
+    "donors": { "currency": false, "str": "Donor Count", "icon": "fa-users"},
+    "ttl_donation": { "currency": true, "str": "Donations Received"}
   }
   function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -26,7 +26,11 @@
       if (dict[key]["currency"]) {
         num = "$" + num;
       }
-      var item = "<div class='summary col-sm-4'><div class='value'>"+num+"</div><div class='key'>"+dict[key]["str"]+"</div></div>";
+      var item = "<div class='summary col-sm-4'><div class='value'>";
+      if (dict[key]["icon"]) {
+        item = item + "<i class='fa " + dict[key]["icon"] + "'></i>  ";
+      } 
+      item = item + num + "</div><div class='key'>" + dict[key]["str"] + "</div></div>";
       items.push(item);
     });
     items.push("</div>");
